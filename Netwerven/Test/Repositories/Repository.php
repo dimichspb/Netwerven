@@ -2,19 +2,41 @@
 namespace Netwerven\Test\Repositories;
 
 use Netwerven\Test\Base\Component;
+use Netwerven\Test\Base\Exceptions\Exception;
 use Netwerven\Test\Base\Patterns\Singleton;
 use Netwerven\Test\DataSources\DataSource;
 use Netwerven\Test\Models\Model;
 use Netwerven\Test\Repositories\Exceptions\InvalidRepositoryArgumentException;
 
+/**
+ * Class Repository
+ * @package Netwerven\Test\Repositories
+ */
 abstract class Repository extends Component implements RepositoryInterface {
 
     use Singleton;
 
+    /**
+     * @var
+     */
     protected static $modelClass;
-
+    /**
+     * @var
+     */
+    protected static $keyField;
+    /**
+     * @var array
+     */
+    protected static $lastResults = [];
+    /**
+     * @var array
+     */
     protected static $dataSources = [];
 
+    /**
+     * @param $alias
+     * @param DataSource $dataSource
+     */
     public static function using($alias, DataSource $dataSource)
     {
         try {
@@ -24,6 +46,9 @@ abstract class Repository extends Component implements RepositoryInterface {
         }
     }
 
+    /**
+     * @param $alias
+     */
     public static function source($alias) {
         try {
             self::getFromDataSourcesArray($alias);
@@ -32,6 +57,9 @@ abstract class Repository extends Component implements RepositoryInterface {
         }
     }
 
+    /**
+     * @param $alias
+     */
     public static function unusing($alias)
     {
         try {
@@ -41,6 +69,9 @@ abstract class Repository extends Component implements RepositoryInterface {
         }
     }
 
+    /**
+     * @param $alias
+     */
     public static function activate($alias)
     {
         try {
@@ -50,6 +81,9 @@ abstract class Repository extends Component implements RepositoryInterface {
         }
     }
 
+    /**
+     * @param $alias
+     */
     public static function deactivate($alias)
     {
         try {
@@ -59,6 +93,10 @@ abstract class Repository extends Component implements RepositoryInterface {
         }
     }
 
+    /**
+     * @param $alias
+     * @return bool
+     */
     public static function isActive($alias)
     {
         try {
@@ -68,27 +106,45 @@ abstract class Repository extends Component implements RepositoryInterface {
         }
     }
 
+    /**
+     * @param $alias
+     * @param DataSource $dataSource
+     */
     private static function addToDataSourcesArray($alias, DataSource $dataSource)
     {
-        self::isString($alias);
+        if (!self::isString($alias)) {
+            return;
+        }
         static::$dataSources[$alias] = [
             'active' => true,
             'source' => $dataSource,
         ];
     }
 
+    /**
+     * @param $alias
+     * @return DataSource
+     */
     private static function getFromDataSourcesArray($alias)
     {
-        static::isUsing($alias);
-        return static::$dataSources[$alias];
+        if (self::isUsing($alias)) {
+            return static::$dataSources[$alias]['source'];
+        }
     }
 
+    /**
+     * @param $alias
+     */
     private static function removeFromDataSourcesArray($alias)
     {
-        self::isUsing($alias);
-        unset(static::$dataSources[$alias]);
+        if (self::isUsing($alias)) {
+            unset(static::$dataSources[$alias]);
+        }
     }
 
+    /**
+     * @param $alias
+     */
     private static function setDataSourceActive($alias)
     {
         if (static::isUsing($alias)) {
@@ -96,6 +152,9 @@ abstract class Repository extends Component implements RepositoryInterface {
         }
     }
 
+    /**
+     * @param $alias
+     */
     private static function setDataSourceInactive($alias)
     {
         if (static::isUsing($alias)) {
@@ -103,6 +162,10 @@ abstract class Repository extends Component implements RepositoryInterface {
         }
     }
 
+    /**
+     * @param $alias
+     * @return bool
+     */
     private static function isDataSourceActive($alias)
     {
         if (static::isUsing($alias)) {
@@ -110,17 +173,27 @@ abstract class Repository extends Component implements RepositoryInterface {
         }
     }
 
+    /**
+     * @param $alias
+     * @return bool
+     */
     public static function isUsing($alias)
     {
-        self::isString($alias);
-        return isset(static::$dataSources[$alias]);
+        if (self::isString($alias)) {
+            return isset(static::$dataSources[$alias]);
+        }
     }
 
+    /**
+     * @param $alias
+     * @return bool
+     */
     private static function isString($alias)
     {
         if (!is_string($alias)) {
             throw new InvalidRepositoryArgumentException('Alias name must be a string');
         }
+        return true;
     }
 
     /**
@@ -136,22 +209,159 @@ abstract class Repository extends Component implements RepositoryInterface {
         }, $activeSources);
     }
 
-    public static function all(array $filter = [])
+    /**
+     * @param array $filter
+     * @return array
+     */
+    public static function all($filter = [])
+    {
+        return static::filter($filter);
+    }
+
+    /**
+     * @param Model $model
+     * @param string $alias
+     * @return bool
+     */
+    public static function add(Model $model, $alias = '')
+    {
+        $sources = static::sources();
+        $count = count($sources);
+        foreach ($sources as $source) {
+            if ($source->add($model)) $count--;
+        }
+        return $count === 0;
+    }
+
+    /**
+     * @param Model $model
+     * @param string $alias
+     * @return bool
+     */
+    public static function update(Model $model, $alias = '')
+    {
+        $sources = static::sources();
+        $count = count($sources);
+        foreach ($sources as $source) {
+            if ($source->update($model)) $count--;
+        }
+        return $count === 0;
+    }
+
+    /**
+     * @param Model $model
+     * @param string $alias
+     * @return bool
+     */
+    public static function delete(Model $model, $alias = '')
+    {
+        $sources = static::sources();
+        $count = count($sources);
+        foreach ($sources as $source) {
+            if ($source->delete($model)) $count--;
+        }
+        return $count === 0;
+    }
+/*
+    private static function isExist(Model $model)
+    {
+        $keyField = static::$keyField;
+        $keyFieldValue = $model->$keyField;
+        if (empty($keyFieldValue)) {
+            throw new InvalidRepositoryArgumentException('Key field ' . $keyField . ' must be specified');
+        }
+        return (count(static::filter([$keyField => $keyFieldValue])))? true: false;
+    }
+*/
+
+    /**
+     * @param array $filter
+     * @param string $alias
+     * @return array
+     */
+    public static function filter(array $filter, $alias = '')
     {
         $model = static::newModel($filter);
-        $sources = static::sources();
-        foreach($sources as $source) {
-            $results = array_merge(isset($results)? $results: [], $source->all($model));
+        if (!empty($alias) && $source = self::getFromDataSourcesArray($alias)) {
+            self::mergeResults($source->filter($model));
+        } else {
+            $sources = static::sources();
+            foreach ($sources as $source) {
+                self::mergeResults($source->filter($model));
+            }
         }
-        return isset($results)? $results: [];
+        self::groupByField();
+        return static::$lastResults;
     }
 
-    public static function one($index, array $filter = [])
+    /**
+     * @param int $index
+     * @param array $filter
+     * @param string $alias
+     * @return array|mixed
+     */
+    public static function find($index = 0, array $filter = [], $alias = '')
     {
-        $allModels = static::all($filter);
-        return isset($allModels[$index])? $allModels[$index]: null;
+        $allModels = static::filter($filter, $alias);
+        switch (gettype($index)) {
+            case 'string':
+                $allModels = (object)$allModels;
+                return (array) (isset($allModels->$index)? $allModels->$index: []);
+                break;
+            case 'integer':
+                while ($index-- > 0) next($allModels);
+                return current($allModels);
+                break;
+            default:
+        }
     }
 
+    /**
+     * @param $index
+     * @param $alias
+     * @return mixed
+     */
+    public static function one($index, $alias)
+    {
+        if ($modelContainers = static::find($index, [], $alias)) {
+            return $modelContainers[0];
+        }
+    }
+
+
+    /**
+     * @param array $modelContainers
+     */
+    private static function mergeResults(array $modelContainers)
+    {
+        static::$lastResults = array_merge(static::$lastResults, $modelContainers);
+    }
+
+    /**
+     * @param string $fieldName
+     * @return array
+     */
+    private static function groupByField($fieldName = '')
+    {
+        $fieldName = !empty($fieldName)? $fieldName: static::$keyField;
+        if (!empty($fieldName)) {
+            $group = new \stdClass();
+            foreach (static::$lastResults as $modelContainer) {
+                if (!isset($modelContainer->model->$fieldName)) continue;
+                $key = $modelContainer->model->$fieldName;
+                $group->$key = isset($group->$key)? $group->$key: [];
+                array_push($group->$key, $modelContainer);
+            }
+            $group = (array)$group;
+            if (count($group)) static::$lastResults = $group;
+        }
+        return static::$lastResults;
+    }
+
+    /**
+     * @param array $params
+     * @return mixed
+     */
     protected static function newModel(array $params = [])
     {
         $modelsNamespace = Model::getNamespace();
@@ -159,6 +369,10 @@ abstract class Repository extends Component implements RepositoryInterface {
         return new $modelClass($params);
     }
 
+    /**
+     * @param array $filter
+     * @return string
+     */
     public static function json(array $filter = [])
     {
         return json_encode(static::sources());

@@ -2,9 +2,9 @@
 namespace Netwerven\Test\DataSources\Exceptions;
 
 /**
- * Class ConnectException
+ * Class QueryException
  * @package Netwerven\Test\DataSources\Exceptions
  */
-class ConnectException extends MySQLiException {
+class QueryException extends MySQLiException {
 
 }

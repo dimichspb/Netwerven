@@ -37,11 +37,27 @@ namespace Netwerven\Test;
  * @author Kris Wallsmith <kris.wallsmith@gmail.com>
  * @author Fabien Potencier <fabien.potencier@symfony-project.org>
  */
+/**
+ * Class AutoLoader
+ * @package Netwerven\Test
+ */
 class AutoLoader
 {
+    /**
+     * @var string
+     */
     private $_fileExtension = '.php';
+    /**
+     * @var null|string
+     */
     private $_namespace;
+    /**
+     * @var null
+     */
     private $_includePath;
+    /**
+     * @var string
+     */
     private $_namespaceSeparator = '\\';
 
     /**

@@ -3,6 +3,7 @@ namespace Netwerven\Test\Models;
 
 /**
  * A test vacancy model
+ * @package Netwerven\Test\Models
  */
 class Vacancy extends Model {
 
