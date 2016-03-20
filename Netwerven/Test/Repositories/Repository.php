@@ -42,7 +42,7 @@ abstract class Repository extends Component implements RepositoryInterface {
         try {
             self::addToDataSourcesArray($alias, $dataSource);
         } catch (\Exception $e) {
-            echo $e->getMessage(), PHP_EOL, "alias: ", $alias, ", value: ", serialize($dataSource), PHP_EOL;
+            self::stdout($e->getMessage(). ' alias: '. $alias. '. value: '. serialize($dataSource));
         }
     }
 
@@ -53,7 +53,7 @@ abstract class Repository extends Component implements RepositoryInterface {
         try {
             self::getFromDataSourcesArray($alias);
         } catch (\Exception $e) {
-            echo $e->getMessage(), PHP_EOL, "alias: ", $alias, PHP_EOL;
+            self::stdout($e->getMessage(). 'alias: '. $alias);
         }
     }
 
@@ -65,7 +65,7 @@ abstract class Repository extends Component implements RepositoryInterface {
         try {
             self::removeFromDataSourcesArray($alias);
         } catch (\Exception $e) {
-            echo $e->getMessage(), PHP_EOL, "alias: ", $alias, PHP_EOL;
+            self::stdout($e->getMessage(). 'alias: '. $alias);
         }
     }
 
@@ -77,7 +77,7 @@ abstract class Repository extends Component implements RepositoryInterface {
         try {
             self::setDataSourceActive($alias);
         } catch (\Exception $e) {
-            echo $e->getMessage(), PHP_EOL, "alias: ", $alias, PHP_EOL;
+            self::stdout($e->getMessage(). 'alias: '. $alias);
         }
     }
 
@@ -89,7 +89,7 @@ abstract class Repository extends Component implements RepositoryInterface {
         try {
             self::setDataSourceInactive($alias);
         } catch (\Exception $e) {
-            echo $e->getMessage(), PHP_EOL, "alias: ", $alias, PHP_EOL;
+            self::stdout($e->getMessage(). 'alias: '. $alias);
         }
     }
 
@@ -102,7 +102,7 @@ abstract class Repository extends Component implements RepositoryInterface {
         try {
             return self::isDataSourceActive($alias);
         } catch (\Exception $e) {
-            echo $e->getMessage(), PHP_EOL, "alias: ", $alias, PHP_EOL;
+            self::stdout($e->getMessage(). 'alias: '. $alias);
         }
     }
 
@@ -116,7 +116,7 @@ abstract class Repository extends Component implements RepositoryInterface {
             return;
         }
         static::$dataSources[$alias] = [
-            'active' => true,
+            'active' => $dataSource->canBeActive(),
             'source' => $dataSource,
         ];
     }
@@ -148,7 +148,8 @@ abstract class Repository extends Component implements RepositoryInterface {
     private static function setDataSourceActive($alias)
     {
         if (static::isUsing($alias)) {
-            static::$dataSources[$alias]['active'] = true;
+            $dataSource = static::getDataSource($alias);
+            static::$dataSources[$alias]['active'] = $dataSource->canBeActive()? true: false;
         }
     }
 
@@ -170,6 +171,17 @@ abstract class Repository extends Component implements RepositoryInterface {
     {
         if (static::isUsing($alias)) {
             return static::$dataSources[$alias]['active'] === true;
+        }
+    }
+
+    /**
+     * @param $alias
+     * @return DataSource
+     */
+    private static function getDataSource($alias)
+    {
+        if (static::isUsing($alias)) {
+            return static::$dataSources[$alias]['source'];
         }
     }
 
@@ -262,17 +274,6 @@ abstract class Repository extends Component implements RepositoryInterface {
         }
         return $count === 0;
     }
-/*
-    private static function isExist(Model $model)
-    {
-        $keyField = static::$keyField;
-        $keyFieldValue = $model->$keyField;
-        if (empty($keyFieldValue)) {
-            throw new InvalidRepositoryArgumentException('Key field ' . $keyField . ' must be specified');
-        }
-        return (count(static::filter([$keyField => $keyFieldValue])))? true: false;
-    }
-*/
 
     /**
      * @param array $filter

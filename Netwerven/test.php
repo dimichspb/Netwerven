@@ -3,6 +3,7 @@ require_once (__DIR__ . DIRECTORY_SEPARATOR . "Test" . DIRECTORY_SEPARATOR . "Bo
 
 use Netwerven\Test\DataSources\MySqlDataSource;
 use Netwerven\Test\DataSources\MySqlConfig;
+use Netwerven\Test\DataSources\JsonDataSource;
 use Netwerven\Test\Repositories\VacancyRepository;
 use Netwerven\Test\Models\Vacancy;
 
@@ -28,9 +29,11 @@ $connection2 = new MySqlConfig([
 
 $mySqlFirst = new MySqlDataSource($connection1);
 $mySqlSecond = new MySqlDataSource($connection2);
+$jsonFirst = new JsonDataSource('.\temp.json', 'id');
 
 VacancyRepository::using('first_mySql', $mySqlFirst);
 VacancyRepository::using('second_mySql', $mySqlSecond);
+VacancyRepository::using('first_json', $jsonFirst);
 //VacancyRepository::deactivate('second_mySql');
 
 $filter = [

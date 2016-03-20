@@ -22,4 +22,6 @@ interface ComponentInterface {
      */
     public static function getNamespace();
 
+    public function stdout($message);
+
 }

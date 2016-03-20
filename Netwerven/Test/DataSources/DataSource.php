@@ -32,10 +32,11 @@ abstract class DataSource extends Component implements DataSourceInterface {
 
     /**
      * @param Model $model
+     * @return mixed
      */
     public function all(Model $model)
     {
-        static::filter($model);
+        $this->filter($model);
     }
 
     /**
@@ -61,6 +62,11 @@ abstract class DataSource extends Component implements DataSourceInterface {
      * @return mixed
      */
     abstract function delete(Model $model);
+
+    /**
+     * @return mixed
+     */
+    abstract function canBeActive();
 
     /**
      * @param int $index

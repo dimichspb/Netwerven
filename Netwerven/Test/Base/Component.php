@@ -48,4 +48,9 @@ abstract class Component implements ComponentInterface {
     {
         return get_object_vars($this);
     }
+
+    public function stdout($message)
+    {
+        echo $message, PHP_EOL;
+    }
 }

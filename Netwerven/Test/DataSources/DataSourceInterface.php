@@ -45,4 +45,10 @@ interface DataSourceInterface {
      * @return mixed
      */
     public function delete(Model $model);
+
+    /**
+     * @return mixed
+     */
+    public function canBeActive();
+
 }

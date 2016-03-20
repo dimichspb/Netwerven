@@ -22,4 +22,12 @@ class MySqlConfig extends DataSourceConfig{
      * @var
      */
     protected $dbpass;
+
+    public function __construct(array $attributes)
+    {
+        if (!$this->checkAttributes($attributes)) {
+            $this->stdout('Can\'t create MySQL config. Not enough params');
+        }
+        parent::__construct($attributes);
+    }
 }
