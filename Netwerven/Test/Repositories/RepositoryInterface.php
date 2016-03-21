@@ -81,10 +81,9 @@ interface RepositoryInterface {
     public static function filter(array $filter, $alias = '');
 
     /**
-     * @param array $filter
      * @return mixed
      */
-    public static function all($filter = []);
+    public static function all();
 
     /**
      * @param Model $model

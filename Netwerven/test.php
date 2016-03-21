@@ -10,7 +10,7 @@ use Netwerven\Test\Models\Vacancy;
 $connection1 = new MySqlConfig([
     'dbhost' => 'localhost',
     'dbname' => 'endouble1',
- //   'dbuser' => 'endouble',
+    'dbuser' => 'endouble',
     'dbpass' => 'endouble',
     'mapping' => [
         'Vacancy' => 'vacancy',
@@ -34,19 +34,19 @@ $jsonFirst = new JsonDataSource('.\temp.json', 'id');
 VacancyRepository::using('first_mySql', $mySqlFirst);
 VacancyRepository::using('second_mySql', $mySqlSecond);
 VacancyRepository::using('first_json', $jsonFirst);
-//VacancyRepository::deactivate('second_mySql');
+VacancyRepository::deactivate('second_mySql');
 
 $filter = [
     'id' => 2,
 ];
 
-//var_dump(VacancyRepository::find("1"));
+var_dump(VacancyRepository::find("1"));
 
 $data = [
     'id' => 5,
-    'title' => 'developer3 common',
+    'title' => 'develope common',
 ];
 
 $vacancy = new Vacancy($data);
 
-var_dump(VacancyRepository::add($vacancy));
+var_dump(VacancyRepository::filter($data));

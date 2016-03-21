@@ -225,9 +225,9 @@ abstract class Repository extends Component implements RepositoryInterface {
      * @param array $filter
      * @return array
      */
-    public static function all($filter = [])
+    public static function all()
     {
-        return static::filter($filter);
+        return static::filter([]);
     }
 
     /**
