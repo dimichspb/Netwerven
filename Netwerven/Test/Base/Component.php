@@ -51,6 +51,6 @@ abstract class Component implements ComponentInterface {
 
     public function stdout($message)
     {
-        echo $message, PHP_EOL;
+        //echo $message, PHP_EOL;
     }
 }

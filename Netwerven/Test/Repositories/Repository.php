@@ -357,6 +357,7 @@ abstract class Repository extends Component implements RepositoryInterface {
      */
     public static function filter(array $filter, $alias = '')
     {
+        static::$lastResults = [];
         $model = static::newModel($filter);
         if (!empty($alias) && $source = self::getFromDataSourcesArray($alias)) {
             self::mergeResults($source->filter($model));
@@ -384,7 +385,7 @@ abstract class Repository extends Component implements RepositoryInterface {
         $allModels = static::filter($filter, $alias);
         switch (gettype($index)) {
             case 'string':
-                $allModels = (object)$allModels;
+                $allModels = (object)$allModels;        // array to object conversion because of convert strings to integer
                 return (array) (isset($allModels->$index)? $allModels->$index: []);
                 break;
             case 'integer':
