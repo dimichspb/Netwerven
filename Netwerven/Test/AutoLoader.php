@@ -168,6 +168,7 @@ class AutoLoader
                 //$fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . $this->_fileExtension;
                 $fileName .= $className . $this->_fileExtension;
                 $result = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . ($this->_includePath !== null ? $this->_includePath . DIRECTORY_SEPARATOR : '') . $fileName;
+                //var_dump($result);
                 require $result;
             }
         }

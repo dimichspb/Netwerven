@@ -7,4 +7,9 @@ namespace Netwerven\Test\DataSources\Exceptions;
  */
 class QueryException extends MySQLiException {
 
+    /**
+     * @var string
+     */
+    protected $defaultMessage = 'Query error exception';
+
 }

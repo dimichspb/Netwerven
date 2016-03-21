@@ -3,30 +3,46 @@ namespace Netwerven\Test\DataSources;
 
 use Netwerven\Test\DataSources\Exceptions\DataException;
 
+/**
+ * Class DbDataSource
+ * Contains base methods of the DataSources which works with different databases
+ *
+ * @package Netwerven\Test\DataSources
+ */
 abstract class DbDataSource extends DataSource {
 
     /**
+     * Default DELETE statement
+     *
      *
      */
     const DELETE_STATEMENT = 'DELETE';
+
     /**
+     * Default UPDATE statement
+     *
      *
      */
     const UPDATE_STATEMENT = 'UPDATE';
+
     /**
+     * Default INSERT statement
      *
      */
     const INSERT_STATEMENT = 'INSERT';
+
     /**
-     *
+     * Default SELECT statement
      */
     const SELECT_STATEMENT = 'SELECT';
 
 
     /**
+     * Selects the data from database
+     *
      * @param $tableName
      * @param array $where
-     * @return mixed
+     * @return array
      */
     protected function _select($tableName, array $where = [])
     {
@@ -35,10 +51,13 @@ abstract class DbDataSource extends DataSource {
             return $this->fetchArray($queryString);
         } catch (\Exception $e) {
             $this->stdout('Error selecting data: '. $e->getMessage());
+            return [];
         }
     }
 
     /**
+     * Inserts data to database
+     *
      * @param $tableName
      * @param array $data
      * @return bool|\mysqli_result
@@ -54,6 +73,8 @@ abstract class DbDataSource extends DataSource {
     }
 
     /**
+     * Updates data in database
+     *
      * @param $tableName
      * @param array $data
      * @return bool|\mysqli_result
@@ -69,6 +90,8 @@ abstract class DbDataSource extends DataSource {
     }
 
     /**
+     * Deletes data from database
+     *
      * @param $tableName
      * @param array $data
      * @return bool|\mysqli_result
@@ -84,6 +107,10 @@ abstract class DbDataSource extends DataSource {
     }
 
     /**
+     * Prepares queries
+     *
+     * TODO:: remove $conditions param, use $data instead
+     *
      * @param $queryType
      * @param $tableName
      * @param array $conditions
@@ -150,9 +177,27 @@ abstract class DbDataSource extends DataSource {
         }
     }
 
+    /**
+     * Returns primary key of the table
+     *
+     * @param $tableName
+     * @return string
+     */
     abstract protected function getPrimaryKey($tableName);
 
+    /**
+     * Returns array of resulting rows
+     *
+     * @param $queryString
+     * @return array
+     */
     abstract protected function fetchArray($queryString);
 
+    /**
+     * Queries the data with the specified query string
+     *
+     * @param $queryString
+     * @return mixed
+     */
     abstract protected function query($queryString);
 }

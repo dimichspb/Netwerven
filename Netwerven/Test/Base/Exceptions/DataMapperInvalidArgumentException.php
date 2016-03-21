@@ -5,7 +5,7 @@ namespace Netwerven\Test\Base\Exceptions;
  * Class DataMapperArgumentException
  * @package Netwerven\Test\Base\Exceptions
  */
-class DataMapperArgumentException extends BaseException {
+class DataMapperInvalidArgumentException extends BaseInvalidArgumentException {
 
     /**
      * @var string

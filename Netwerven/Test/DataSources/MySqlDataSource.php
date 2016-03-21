@@ -8,20 +8,26 @@ use Netwerven\Test\Repositories\ModelContainer;
 
 /**
  * Class MySqlDataSource
+ * Example MySQL database DataSource class
+ *
  * @package Netwerven\Test\DataSources
  */
 class MySqlDataSource extends DbDataSource {
 
     /**
+     * MySQLi object
+     *
      * @var \mysqli
      */
     private $connection;
 
     /**
      * MySqlDataSource constructor.
-     * @param DataSourceConfig|null $config
+     * Tries to connect to MySQL database using MySQLConfig. Notice if connection error or sets $connection attribute if success
+     *
+     * @param MySqlConfig $config
      */
-    public function __construct(DataSourceConfig $config)
+    public function __construct(MySqlConfig $config)
     {
         $this->config = $config;
         if (!$config->checkAttributes()) {
@@ -40,8 +46,10 @@ class MySqlDataSource extends DbDataSource {
     }
 
     /**
+     * Returns all models from the particular DataSource which are similar to the provided one
+     *
      * @param Model $model
-     * @return array
+     * @return ModelContainer[]
      */
     public function filter(Model $model)
     {
@@ -59,6 +67,8 @@ class MySqlDataSource extends DbDataSource {
     }
 
     /**
+     * Adds model to the particular DataSource
+     *
      * @param Model $model
      * @return bool|\mysqli_result
      */
@@ -72,6 +82,8 @@ class MySqlDataSource extends DbDataSource {
     }
 
     /**
+     * Updates the model at the particular DataSource
+     *
      * @param Model $model
      * @return bool|\mysqli_result
      */
@@ -85,6 +97,8 @@ class MySqlDataSource extends DbDataSource {
     }
 
     /**
+     * Deletes the model from the particular DataSource
+     *
      * @param Model $model
      * @return bool|\mysqli_result
      */
@@ -97,12 +111,19 @@ class MySqlDataSource extends DbDataSource {
         return $this->_delete($tableName, $row);
     }
 
+    /**
+     * Check whether the DataSource can be active or not
+     *
+     * @return bool
+     */
     public function canBeActive()
     {
         return isset($this->connection);
     }
 
     /**
+     * Returns name of primary key field
+     *
      * @param $tableName
      * @return mixed
      */
@@ -113,16 +134,21 @@ class MySqlDataSource extends DbDataSource {
     }
 
     /**
+     * Returns array of resulting rows
+     *
      * @param $queryString
      * @return mixed
      */
     protected function fetchArray($queryString)
     {
-        $result = $this->query($queryString);
-        return $result->fetch_all(MYSQLI_ASSOC);
+        if ($result = $this->query($queryString)) {
+            return $result->fetch_all(MYSQLI_ASSOC);
+        }
     }
 
     /**
+     * Queries the data with the specified query string
+     *
      * @param $queryString
      * @return bool|\mysqli_result
      */

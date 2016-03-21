@@ -7,6 +7,8 @@ use Netwerven\Test\Base\Exceptions\SingletonWakeupException;
 
 /**
  * class Singleton.
+ * Basic Singleton Design Pattern implementation. Prevents creating multiply instances of an object
+ *
  */
 trait Singleton
 {
@@ -16,7 +18,7 @@ trait Singleton
     private static $instance;
 
     /**
-     * gets the instance via lazy initialization (created on first usage).
+     * Gets the instance via lazy initialization (created on first usage).
      *
      * @return self
      */
@@ -30,14 +32,14 @@ trait Singleton
     }
 
     /**
-     * is not allowed to call from outside: private!
+     * Is not allowed to call from outside: private!
      */
     private function __construct()
     {
     }
 
     /**
-     * prevent the instance from being cloned.
+     * Prevent the instance from being cloned.
      *
      * @throws SingletonCloneException
      *
@@ -49,7 +51,7 @@ trait Singleton
     }
 
     /**
-     * prevent from being unserialized.
+     * Prevent from being unserialized.
      *
      * @throws SingletonWakeupException
      *

@@ -3,19 +3,26 @@ namespace Netwerven\Test\DataSources;
 
 use Netwerven\Test\Base\Component;
 use Netwerven\Test\Models\Model;
+use Netwerven\Test\Repositories\ModelContainer;
 
 /**
  * Class DataSource
+ *
+ *
  * @package Netwerven\Test\DataSources
  */
 abstract class DataSource extends Component implements DataSourceInterface {
 
     /**
-     * @var
+     * Object of DataSourceConfig class
+     *
+     * @var DataSourceConfig
      */
     protected $config;
 
     /**
+     * Returns mapping "Model class" => "Table name"
+     *
      * @param string $modelName
      * @return string|array|null
      */
@@ -31,8 +38,10 @@ abstract class DataSource extends Component implements DataSourceInterface {
     }
 
     /**
+     * Returns all models from the particular DataSource
+     *
      * @param Model $model
-     * @return mixed
+     * @return ModelContainer[]
      */
     public function all(Model $model)
     {
@@ -40,38 +49,50 @@ abstract class DataSource extends Component implements DataSourceInterface {
     }
 
     /**
+     * Returns all models from the particular DataSource which are similar to the provided one
+     *
      * @param Model $model
-     * @return mixed
+     * @return ModelContainer[]
      */
     abstract function filter(Model $model);
 
     /**
+     * Adds model to the particular DataSource
+     *
      * @param Model $model
-     * @return mixed
+     * @return boolean
      */
     abstract function add(Model $model);
 
     /**
+     * Updates the model at the particular DataSource
+     *
      * @param Model $model
-     * @return mixed
+     * @return boolean
      */
     abstract function update(Model $model);
 
     /**
+     * Deletes the model from the particular DataSource
+     *
      * @param Model $model
-     * @return mixed
+     * @return boolean
      */
     abstract function delete(Model $model);
 
     /**
-     * @return mixed
+     * Check whether the DataSource can be active or not
+     *
+     * @return boolean
      */
     abstract function canBeActive();
 
     /**
+     * Returns first (or with specified index) Model from the particular DataSource which is similar to the provided one
+     *
      * @param int $index
      * @param Model $model
-     * @return array|mixed
+     * @return Model
      */
     public function one($index = 0, Model $model)
     {
